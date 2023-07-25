@@ -11,7 +11,7 @@ const actions =	new Map([
 	["div", divide = require('./divide.js')],
 	["divrem", divrem = require('./divrem.js')],
 	["pow", power = require('./power.js')],
-	["root", root = require('./root.js')]]);
+	["root", _root = require('./root.js')]]);
 
 const myEmitter = new EventEmitter();
 for (const [key, value] of actions) {

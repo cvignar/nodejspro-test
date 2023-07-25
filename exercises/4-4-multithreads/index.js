@@ -33,7 +33,7 @@ const sprit = (array, chunkSize) => {
 	return result;
 }
 
-const size = 30000000;
+const size = 300000;
 const chunkCount = os.cpus().length;
 const chunkSize = Math.round(size / chunkCount);
 const array = new Array();

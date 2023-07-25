@@ -1,3 +1,4 @@
+const {performance} = require('perf_hooks');
 const notifier = require('node-notifier');
 const path = require('path');
 

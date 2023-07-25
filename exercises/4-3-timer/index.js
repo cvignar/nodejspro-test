@@ -1,3 +1,4 @@
+const {performance} = require('perf_hooks');
 const start = performance.now();
 const usage = "Usage: node index.js xxHxxMxxS\n" +
 "H:xx: 00-24\n" +

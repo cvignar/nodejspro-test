@@ -9,7 +9,7 @@ const actions =	new Map([
 	["div", divide = require('./divide.js')],
 	["divrem", divrem = require('./divrem.js')],
 	["pow", power = require('./power.js')],
-	["root", root = require('./root.js')]]);
+	["root", _root = require('./root.js')]]);
 
 function main() {
 	if (process.argv.length != 5) {
