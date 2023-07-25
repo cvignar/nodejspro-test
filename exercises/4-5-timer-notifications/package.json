@@ -1,0 +1,20 @@
+{
+  "name": "4-5-timer-notifications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+	"start": "node index.js 00h00m00s",
+    "test": "node index.js 00h05M30s",
+    "test_error": "node index.js error_argument"
+  },
+  "keywords": [
+    "timer",
+    "notifications"
+  ],
+  "author": "Anna Uryvaeva",
+  "license": "ISC",
+  "dependencies": {
+    "node-notifier": "^10.0.1"
+  }
+}
