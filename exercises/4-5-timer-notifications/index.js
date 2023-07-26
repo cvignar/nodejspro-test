@@ -1,6 +1,5 @@
 const {performance} = require('perf_hooks');
 const notifier = require('node-notifier');
-const path = require('path');
 
 const start = performance.now();
 const usage = "Usage: node index.js xxHxxMxxS\n" +
@@ -31,7 +30,6 @@ const main = () => {
 		notifier.notify({
 			title: 'Timer',
 			message: `The time is up!\n${hours} hours ${minutes} minutes ${now} have passed.`,
-			icon: path.join(__dirname, 'ghost.jpg'),
 			sound: true,
 			wait: true
 		},
