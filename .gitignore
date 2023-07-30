@@ -1,2 +1,4 @@
 node_modules/
 lectures/
+.DS_Store
+file.txt

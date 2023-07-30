@@ -11,20 +11,14 @@ const usage = "Usage: node index.js xxHxxMxxS\n" +
 const main = () => {
 	const regex = new RegExp('^([0|1][0-9]|2[0-4])h([0-5][0-9]|60)m([0-5][0-9]|60)s$', 'i');
 	const time = regex.exec(process.argv[2]);
-	if (time == null) {
-		console.log(usage);
-		return ;
+	if (!time) {
+		throw new Error(usage);
 	}
-	const sec = parseInt(time[3]) +
-	parseInt(time[2]) * 60 +
-	parseInt(time[1]) * 3600;
+	const sec = parseInt(time[1]) * 3600 +
+				parseInt(time[2]) * 60 +
+				parseInt(time[3]);
 	setTimeout(() => {
-		let now = (performance.now() - start) / 1000;
-		let hours = Math.floor(now/3600);
-		now -= hours*3600;
-		let minutes = Math.floor(now/60);
-		now = Math.floor(now - Math.floor(minutes*60));
-		console.log(`The time is up!\n${hours} hours ${minutes} minutes ${now} seconds have passed.`)
+		console.log(`The time is up!\n${parseInt(time[1])} hours ${parseInt(time[2])} minutes ${parseInt(time[3])} seconds have passed.`)
 	}, sec * 1000);
 }
 main();

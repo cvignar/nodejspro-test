@@ -20,34 +20,27 @@ for (const [key, value] of actions) {
 	});
 }
 
+myEmitter.once('result', (result) => {
+	console.log(`${firstNum} ${command} ${secondNum} = ${result}`);
+	myEmitter.removeAllListeners();
+});
+
 function main() {
 	if (process.argv.length != 5) {
 		console.log(usage);
 		return ;
 	}
-	let firstNum = parseFloat(process.argv[2]);
-	let secondNum = parseFloat(process.argv[3]);
-	let command = process.argv[4];
+	const firstNum = parseFloat(process.argv[2]);
+	const secondNum = parseFloat(process.argv[3]);
+	const command = process.argv[4];
 	try {
-		myEmitter.once('result', (result) => {
-			console.log(`${firstNum} ${command} ${secondNum} = ${result}`);
-			myEmitter.removeAllListeners();
-		});
-		// let iterator1 = actions.keys();
-		for (const [key, value] of actions) {
-			if (command == key) {
-				myEmitter.emit(`${command}`, firstNum, secondNum);
-				break ;
-			}
-		}
-		if (actions.has(command))
+		if (actions.has(command)) {
 			myEmitter.emit(command, (firstNum, secondNum));
-		else
+		} else {
 			console.log(usage);
+		}
 	} catch (e) {
 		console.error(e.message);
 	}
 }
 main();
-// console.log(myEmitter.eventNames());
-// console.log(myEmitter);

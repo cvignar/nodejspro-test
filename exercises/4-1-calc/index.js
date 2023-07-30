@@ -13,17 +13,16 @@ const actions =	new Map([
 
 function main() {
 	if (process.argv.length != 5) {
-		console.log(usage);
-		return ;
+		throw new Error(usage);
 	}
-	let firstNum = parseFloat(process.argv[2]);
-	let secondNum = parseFloat(process.argv[3]);
-	let command = process.argv[4];
+	const firstNum = parseFloat(process.argv[2]);
+	const secondNum = parseFloat(process.argv[3]);
+	const command = process.argv[4];
 	try {
 		if (actions.has(command))
 			console.log(`${firstNum} ${command} ${secondNum} = ${actions.get(command)(firstNum, secondNum)}`);
 		else
-			console.log(usage);
+			throw new Error(usage);
 	} catch (e) {
 		console.error(e.message);
 	}
