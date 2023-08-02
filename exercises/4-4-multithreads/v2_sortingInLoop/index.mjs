@@ -1,7 +1,7 @@
-const os = require('os');
-const perf_hooks = require('perf_hooks');
-const {Worker} = require('worker_threads');
-const count_multiples_of = require('./count_multiples_of.js');
+import * as os from 'os';
+import * as perf_hooks from 'perf_hooks';
+import { Worker } from 'worker_threads';
+import { count_multiples_of } from './count_multiples_of.mjs';
 
 const performanceObserver = new perf_hooks.PerformanceObserver((items) => {
 	items.getEntries().forEach((entry) => {
@@ -10,9 +10,9 @@ const performanceObserver = new perf_hooks.PerformanceObserver((items) => {
 });
 performanceObserver.observe({entryTypes: ["measure"]});
 
-worker_counter = (num, array) => {
+const worker_counter = (num, array) => {
 	return new Promise((resolve) => {
-		const worker = new Worker('./worker.js', {
+		const worker = new Worker('./worker.mjs', {
 			workerData: {
 				num,
 				array
@@ -24,7 +24,7 @@ worker_counter = (num, array) => {
 	});
 }
 
-const sprit = (array, chunkSize) => {
+const split = (array, chunkSize) => {
 	let result = [];
 	let copy = [...array];
 	while (copy.length > 0) {
@@ -34,19 +34,7 @@ const sprit = (array, chunkSize) => {
 	return result;
 }
 
-const size = 30000000;
-const chunkCount = os.cpus().length;
-const chunkSize = Math.round(size / chunkCount);
-const array = new Array();
-
-for (let i = 0; i < size; i++) {
-	array.push(Math.random() > 0.5 ? Math.round(Math.random() * 100) : Math.round(Math.random() * 100).toString());
-}
-	// console.log(array);
-
-const chunkedArray = sprit(array, chunkSize);
-
-one_thread = () => {
+const one_thread = (array) => {
 	performance.mark('start one');
 	let result = count_multiples_of(3, array);
 	performance.mark('end one');
@@ -54,11 +42,10 @@ one_thread = () => {
 	console.log(`one_thread array has ${result} multiples of three`);
 };
 
-multiple_threads = async () => {
-	// performance.mark('end');
+const multiple_threads = async (chunkedArray) => {
 	const workerProms = [];
 	performance.mark('start');
-	for (chunk of chunkedArray)
+	for (const chunk of chunkedArray)
 		workerProms.push(worker_counter(3, chunk));
 	const result = await Promise.all(workerProms);
 	performance.mark('end');
@@ -66,5 +53,14 @@ multiple_threads = async () => {
 	console.log(`multiple_threads array has ${result.reduce((res, el) => res += el)} multiples of three`);
 };
 
-one_thread();
-multiple_threads();
+const size = 3000000;
+const chunkCount = os.cpus().length;
+const chunkSize = Math.round(size / chunkCount);
+const array = new Array();
+for (let i = 0; i < size; i++) {
+	array.push(Math.random() > 0.5 ? Math.round(Math.random() * 100) : Math.round(Math.random() * 100).toString());
+}
+const chunkedArray = split(array, chunkSize);
+
+multiple_threads(chunkedArray);
+one_thread(array);

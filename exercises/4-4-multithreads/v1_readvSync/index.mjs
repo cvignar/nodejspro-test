@@ -1,9 +1,11 @@
-const os = require('os');
-const fs = require('node:fs')
-const path = require('path');
-const perf_hooks = require('perf_hooks');
-const {Worker} = require('worker_threads');
-const count_multiples_of_three = require('./count_multiples_of_three.js');
+import * as os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as perf_hooks from 'perf_hooks';
+import { Worker } from 'worker_threads';
+import { count_multiples_of_three } from './count_multiples_of_three.mjs';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const performanceObserver = new perf_hooks.PerformanceObserver((items) => {
 	items.getEntries().forEach((entry) => {
@@ -12,10 +14,10 @@ const performanceObserver = new perf_hooks.PerformanceObserver((items) => {
 });
 performanceObserver.observe({entryTypes: ["measure"]});
 
-worker_counter = (fd, from, to) => {
+const worker_counter = (fd, from, to) => {
 	return new Promise((resolve) => {
 
-		const worker = new Worker('./worker.js', {
+		const worker = new Worker('./worker.mjs', {
 			workerData: {
 				fd,
 				from,
@@ -44,7 +46,7 @@ const generateFile = (filename, size) => {
 	}
 };
 
-one_thread = async (filename, size) => {
+const one_thread = async (filename, size) => {
 	let filehandle;
 	try {
 		filehandle = await fs.promises.open(filename, 'r+');
@@ -60,7 +62,7 @@ one_thread = async (filename, size) => {
 	}
 };
 
-multiple_threads = async (filename, size, chunkCount, chunkSize) => {
+const multiple_threads = async (filename, size, chunkCount, chunkSize) => {
 	let filehandles = [];
 	try {
 		for (let i = 0; i < chunkCount; i++) {
@@ -73,14 +75,14 @@ multiple_threads = async (filename, size, chunkCount, chunkSize) => {
 				worker_counter(
 					filehandles[i].fd,
 					i * chunkSize,
-					i == chunkSize - 1 ? size : (i + 1) * chunkSize
-					)
-				);
+					(i == chunkCount - 1) ? size : ((i + 1) * chunkSize)
+				)
+			);
 		}
 		const result = await Promise.all(workerProms);
 		performance.mark('end');
 		performance.measure('multiple_threads', 'start', 'end');
-		console.log(`multiple_threads array has ${result.reduce((res,el) => res += el)} multiples of three`);
+		console.log(`multiple_threads array has ${result.reduce((res,el) => res += el, 0)} multiples of three`);
 	} finally {
 		for (const filehandle of filehandles) {			
 			if (filehandle) {
@@ -91,8 +93,7 @@ multiple_threads = async (filename, size, chunkCount, chunkSize) => {
 }
 
 const filename = path.join(__dirname + '/file.txt');
-const fileSize = 30000000;
-
+const fileSize = 3000000;
 generateFile(filename, fileSize);
 
 const chunkCount = os.cpus().length;

@@ -1,7 +1,4 @@
-const {performance} = require('perf_hooks');
-const notifier = require('node-notifier');
-
-const start = performance.now();
+const { notify } = require('node-notifier');
 const usage = "Usage: node index.js xxHxxMxxS\n" +
 "H:xx: 00-24\n" +
 "M:xx: 00-60\n" +
@@ -10,26 +7,22 @@ const usage = "Usage: node index.js xxHxxMxxS\n" +
 "node index.js 00H00M00S\n" +
 "node index.js 24h60m60s\n" +
 "node index.js 01H01m01s";
+
 const main = () => {
 	const regex = new RegExp('^([0|1][0-9]|2[0-4])h([0-5][0-9]|60)m([0-5][0-9]|60)s$', 'i');
 	const time = regex.exec(process.argv[2]);
-	if (time == null) {
-		console.log(usage);
-		return ;
+	if (!time) {
+		throw new Error(usage);
 	}
-	const sec = parseInt(time[3]) +
-	parseInt(time[2]) * 60 +
-	parseInt(time[1]) * 3600;
+	const sec = parseInt(time[1]) * 3600 +
+				parseInt(time[2]) * 60 +
+				parseInt(time[3]);
 	setTimeout(() => {
-		let now = (performance.now() - start) / 1000;
-		let hours = Math.floor(now/3600);
-		now -= hours*3600;
-		let minutes = Math.floor(now/60);
-		now = Math.floor(now - Math.floor(minutes*60));
-		console.log(`The time is up!\n${hours} hours ${minutes} minutes ${now} seconds have passed.`);
-		notifier.notify({
+		const msg = `The time is up!\n${parseInt(time[1])} hours ${parseInt(time[2])} minutes ${parseInt(time[3])} seconds have passed.`;
+		console.log(msg);
+		notify({
 			title: 'Timer',
-			message: `The time is up!\n${hours} hours ${minutes} minutes ${now} have passed.`,
+			message: msg,
 			sound: true,
 			wait: true
 		},
